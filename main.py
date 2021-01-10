@@ -1,5 +1,5 @@
 import tensorflow as tf
-from model import TweetClassifier
+from model import TweetClassifier, BertModel
 import preprocess
 
 
@@ -7,16 +7,20 @@ def train(dataset, model):
     epochs = 5
     shuffled = dataset.shuffle(1000, reshuffle_each_iteration=True)
     batched = shuffled.batch(model.batchSize)
+    bmodel = BertModel()
+
     for epoch in range(epochs):
         losses = []
         for step, (tweetids, keywords, locations, texts, masks, targets) in enumerate(batched):
             
+            poolerOutputs = bmodel.pool(texts, masks)
+
             with tf.GradientTape() as tape:
-                predictions = model.call(texts, masks)
+                predictions = model(poolerOutputs)
                 loss = model.lossFunc(targets, predictions)
                 losses.append(loss)
-                gradients = tape.gradient(loss, model.OutputLayer.trainable_weights)
-                model.optimizer.apply_gradients(zip(gradients, model.OutputLayer.trainable_weights))
+                gradients = tape.gradient(loss, model.trainable_variables)
+                model.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
         
         print("epoch loss", np.exp(np.mean(losses)))
 
