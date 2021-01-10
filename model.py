@@ -13,7 +13,7 @@ class BertModel:
 class TweetClassifier(tf.keras.Model):
     def __init__(self):
         super(TweetClassifier, self).__init__()
-        self.Optimizer = tf.keras.optimizers.Adam()
+        self.optimizer = tf.keras.optimizers.Adam()
         self.lossFunc = tf.keras.losses.BinaryCrossentropy()
         self.outputLayer = tf.keras.layers.Dense(1, activation='relu')
         self.batchSize = 10

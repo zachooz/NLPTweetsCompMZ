@@ -1,7 +1,8 @@
 import tensorflow as tf
 from model import TweetClassifier, BertModel
 import preprocess
-
+from tqdm import tqdm
+import numpy as np
 
 def train(dataset, model):
     epochs = 5
@@ -11,7 +12,7 @@ def train(dataset, model):
 
     for epoch in range(epochs):
         losses = []
-        for step, (tweetids, keywords, locations, texts, masks, targets) in enumerate(batched):
+        for step, (tweetids, keywords, locations, texts, masks, targets) in enumerate(tqdm(batched)):
             
             poolerOutputs = bmodel.pool(texts, masks)
 
@@ -19,6 +20,7 @@ def train(dataset, model):
                 predictions = model(poolerOutputs)
                 loss = model.lossFunc(targets, predictions)
                 losses.append(loss)
+
                 gradients = tape.gradient(loss, model.trainable_variables)
                 model.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
         
