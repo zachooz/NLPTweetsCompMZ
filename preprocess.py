@@ -41,7 +41,6 @@ def preprocess(path, train=True):
         if train:
             target = row[data_dict["target"]]
             targets.append(target)
-        
 
     pad_token = bertTokenizer.pad_token
     pad_token = bertTokenizer.convert_tokens_to_ids(pad_token)

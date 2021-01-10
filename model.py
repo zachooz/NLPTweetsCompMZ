@@ -1,5 +1,5 @@
 import tensorflow as tf
-from transformers import BertTokenizer, BertModel
+from transformers import BertTokenizer, TFBertModel
 
 class TweetClassifier(tf.keras.Model):
     def __init__(self):
@@ -11,14 +11,14 @@ class TweetClassifier(tf.keras.Model):
 
         self.batchSize = 10
 
-        self.BertModel = BertModel.from_pretrained('bert-base-uncased')
+        self.BertModel = TFBertModel.from_pretrained('bert-base-uncased')
 
-        self.OutputLayer = tf.keras.layers.Dense(2)
+        self.OutputLayer = tf.keras.layers.Dense(1)
 
     
     def call(self, inputs, masks):
-        print(inputs)
-        bertOutputs = self.BertModel(input_ids=inputs, attention_mask=masks)
+        bertOutputs = self.BertModel(inputs, attention_mask=masks)
         pooler_output = bertOutputs[1]
         finalOutput = self.OutputLayer(pooler_output)
+        
         return finalOutput
