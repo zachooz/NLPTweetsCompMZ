@@ -34,6 +34,8 @@ def predictAndWrite(dataset, model, outputFile):
     batched = dataset.batch(model.batchSize)
     ids = []
     predictions = []
+
+    bmodel = BertModel()
     for step, (tweetids, keywords, locations, texts, masks) in enumerate(batched):
         for tweetid in tweetids:
             ids.append(id)
@@ -42,7 +44,6 @@ def predictAndWrite(dataset, model, outputFile):
                 predictions.append(1)
             else:
                 predictions.append(0)
-
     df = pd.DataFrame(data={
         'id': ids,
         'target': predictions
