@@ -30,7 +30,7 @@ def train(dataset, model):
 
 
 def predictAndWrite(dataset, model, outputFile):
-    batched = shuffled.batch(model.batchSize)
+    batched = dataset.batch(model.batchSize)
     numExample = 0
     for step, (tweetids, keywords, locations, texts, masks) in enumerate(batched):
         predictions = tf.math.argmax(model.call(texts, masks))
