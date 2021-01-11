@@ -4,7 +4,7 @@ import tensorflow as tf
 from transformers import BertTokenizerFast
 
 def preprocess(path, train=True):
-    bertTokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased')
+    bertTokenizer = BertTokenizerFast.from_pretrained('bert-large-cased')
 
     df = pd.read_csv(path).replace(np.nan, '', regex=True).to_numpy()
     
