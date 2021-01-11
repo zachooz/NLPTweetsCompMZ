@@ -35,11 +35,13 @@ def predictAndWrite(dataset, model, outputFile):
     ids = []
     predictions = []
     for step, (tweetids, keywords, locations, texts, masks) in enumerate(batched):
-        preds = tf.math.argmax(model.call(texts, masks))
         for id in tweetids:
             ids.append(id)
         for pred in predictions:
-            predictions.append(pred)
+            if pred > 0.5:
+                predictions.append(1)
+            else:
+                predictions.append(0)
 
     df = pd.DataFrame(data={
         'id': ids,
