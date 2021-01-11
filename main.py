@@ -34,20 +34,23 @@ def predictAndWrite(dataset, model, outputFile):
     batched = dataset.batch(model.batchSize)
     ids = []
     predictions = []
+
+    bmodel = BertModel()
     for step, (tweetids, keywords, locations, texts, masks) in enumerate(batched):
-        for id in tweetids:
-            ids.append(id)
-        for pred in predictions:
+        poolerOutputs = bmodel.pool(texts, masks)
+        preds = model(poolerOutputs)
+        for tweetid in tweetids:
+            ids.append(tweetid)
+        for pred in preds:
             if pred > 0.5:
                 predictions.append(1)
             else:
                 predictions.append(0)
-
     df = pd.DataFrame(data={
         'id': ids,
         'target': predictions
     })
-    df.to_csv('output.csv', index=Fas)
+    df.to_csv('output.csv', index=False)
 
 def main():
     dataset = preprocess.preprocess("train.csv")
