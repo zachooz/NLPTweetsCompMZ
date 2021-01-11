@@ -5,7 +5,7 @@ from tqdm import tqdm
 import numpy as np
 
 def train(dataset, model):
-    epochs = 10
+    epochs = 5
     shuffled = dataset.shuffle(1000, reshuffle_each_iteration=True)
     batched = shuffled.batch(model.batchSize)
     bmodel = BertModel()
@@ -25,10 +25,11 @@ def train(dataset, model):
                 model.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
         print("epoch loss", np.exp(np.mean(losses)))
+    
+    model.save_weights('./data/weights.tmd')
 
 
 def predictAndWrite(dataset, model, outputFile):
-    shuffled = dataset.shuffle(1000, reshuffle_each_iteration=True)
     batched = shuffled.batch(model.batchSize)
     numExample = 0
     for step, (tweetids, keywords, locations, texts, masks) in enumerate(batched):
