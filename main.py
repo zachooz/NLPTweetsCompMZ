@@ -18,9 +18,9 @@ def train(dataset, model):
             with tf.GradientTape() as tape:
                 classPredictions, nextWordPredictions = model(texts, masks)
                 classLoss = model.classLossFunc(tf.one_hot(targets, 2), classPredictions)
-                onehotNextWords = tf.one_hot(texts[1:], 30522)
+                onehotNextWords = tf.one_hot(texts[:, 1:], 30522)
                 
-                nextWordLoss = model.nextWordLossFunc(onehotNextWords, nextWordPredictions)
+                nextWordLoss = model.nextWordLossFunc(onehotNextWords, nextWordPredictions[:, :-1, :])
 
                 summedLoss = nextWordLoss + classLoss
                 losses.append(summedLoss)

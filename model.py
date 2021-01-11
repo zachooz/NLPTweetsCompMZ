@@ -14,7 +14,7 @@ class TweetClassifier(tf.keras.Model):
 
         self.Dl1 = tf.keras.layers.Dense(300, activation='relu')
         self.OutputLayer = tf.keras.layers.Dense(1)
-        self.batchSize = 16
+        self.batchSize = 4
 
 
     def call(self, inputs, masks):
