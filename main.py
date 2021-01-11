@@ -5,7 +5,7 @@ from tqdm import tqdm
 import numpy as np
 
 def train(dataset, model):
-    epochs = 5
+    epochs = 10
     shuffled = dataset.shuffle(1000, reshuffle_each_iteration=True)
     batched = shuffled.batch(model.batchSize)
     bmodel = BertModel()
@@ -13,7 +13,7 @@ def train(dataset, model):
     for epoch in range(epochs):
         losses = []
         for step, (tweetids, keywords, locations, texts, masks, targets) in enumerate(tqdm(batched)):
-            
+
             poolerOutputs = bmodel.pool(texts, masks)
 
             with tf.GradientTape() as tape:
@@ -23,7 +23,7 @@ def train(dataset, model):
 
                 gradients = tape.gradient(loss, model.trainable_variables)
                 model.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
-        
+
         print("epoch loss", np.exp(np.mean(losses)))
 
 
@@ -43,7 +43,7 @@ def main():
     model = TweetClassifier()
 
     train(dataset, model)
-    
+
     outputFile = open("output.txt", "w+")
 
     evalDataset = preprocess.preprocess("test.csv", train=False)
