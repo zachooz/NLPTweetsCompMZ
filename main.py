@@ -26,7 +26,7 @@ def train(dataset, model):
                 model.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
         print("epoch loss", np.exp(np.mean(losses)))
-    
+
     model.save_weights('./data/weights.tmd')
 
 
@@ -35,7 +35,7 @@ def predictAndWrite(dataset, model, outputFile):
     ids = []
     predictions = []
     for step, (tweetids, keywords, locations, texts, masks) in enumerate(batched):
-        for id in tweetids:
+        for tweetid in tweetids:
             ids.append(id)
         for pred in predictions:
             if pred > 0.5:
@@ -47,12 +47,12 @@ def predictAndWrite(dataset, model, outputFile):
         'id': ids,
         'target': predictions
     })
-    df.to_csv('output.csv', index=Fas)
+    df.to_csv('output.csv', index=False)
 
 def main():
     dataset = preprocess.preprocess("train.csv")
     model = TweetClassifier()
-    
+
     train(dataset, model)
 
     outputFile = open("output.txt", "w+")
