@@ -3,9 +3,10 @@ from model import TweetClassifier, BertModel
 import preprocess
 from tqdm import tqdm
 import numpy as np
+import pandas as pd
 
 def train(dataset, model):
-    epochs = 5
+    epochs = 1
     shuffled = dataset.shuffle(1000, reshuffle_each_iteration=True)
     batched = shuffled.batch(model.batchSize)
     bmodel = BertModel()
@@ -31,18 +32,25 @@ def train(dataset, model):
 
 def predictAndWrite(dataset, model, outputFile):
     batched = dataset.batch(model.batchSize)
-    numExample = 0
+    ids = []
+    predictions = []
     for step, (tweetids, keywords, locations, texts, masks) in enumerate(batched):
-        predictions = tf.math.argmax(model.call(texts, masks))
-        for thing in predictions:
-            outputFile.write(str(numExample) + "," + str(thing))
-            numExample += 1
+        preds = tf.math.argmax(model.call(texts, masks))
+        for id in tweetids:
+            ids.append(id)
+        for pred in predictions:
+            predictions.append(pred)
 
+    df = pd.DataFrame(data={
+        'id': ids,
+        'target': predictions
+    })
+    df.to_csv('output.csv', index=Fas)
 
 def main():
     dataset = preprocess.preprocess("train.csv")
     model = TweetClassifier()
-
+    
     train(dataset, model)
 
     outputFile = open("output.txt", "w+")

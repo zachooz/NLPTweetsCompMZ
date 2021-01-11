@@ -15,14 +15,14 @@ class TweetClassifier(tf.keras.Model):
         super(TweetClassifier, self).__init__()
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001)
         self.lossFunc = tf.keras.losses.BinaryCrossentropy()
-        # self.preOutPut = tf.keras.layers.Dense(300, activation='relu')
+        self.preOutPut = tf.keras.layers.Dense(300, activation='relu')
         self.outputLayer = tf.keras.layers.Dense(1)
         self.batchSize = 50
 
 
     def call(self, poolerOutput):
-        # preOutOutput = self.preOutPut(poolerOutput)
-        finalOutput = self.outputLayer(poolerOutput)
+        preOutOutput = self.preOutPut(poolerOutput)
+        finalOutput = self.outputLayer(preOutOutput)
 
         return finalOutput
 
