@@ -4,11 +4,11 @@ from transformers import TFAutoModel
 class TweetClassifier(tf.keras.Model):
     def __init__(self):
         super(TweetClassifier, self).__init__()
-        self.optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001)
+        self.optimizer = tf.keras.optimizers.Adam(learning_rate=2e-3)
         self.lossFunc = tf.keras.losses.BinaryCrossentropy()
         self.berttweet = TFAutoModel.from_pretrained("vinai/bertweet-base")
         # self.preOutPut = tf.keras.layers.Dense(300, activation='relu')
-        self.outputLayer = tf.keras.layers.Dense(1)
+        self.outputLayer = tf.keras.layers.Dense(2)
         self.batchSize = 1
 
 
@@ -18,7 +18,7 @@ class TweetClassifier(tf.keras.Model):
         # preOutOutput = self.preOutPut(poolerOutput)
         finalOutput = self.outputLayer(poolerOutput)
 
-        return finalOutput
+        return tf.nn.softmax(finalOutput)
 
 if __name__ == "__main__":
     layer = tf.keras.layers.Dense(1, activation='relu')
