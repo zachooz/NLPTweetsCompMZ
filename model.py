@@ -1,28 +1,22 @@
 import tensorflow as tf
-from transformers import BertTokenizer, TFBertModel
-
-class BertModel:
-    def __init__(self):
-        self.model = TFBertModel.from_pretrained('bert-base-uncased')
-
-    def pool(self, inputs, masks):
-        bertOutputs = self.model(inputs, attention_mask=masks)
-        pooler_output = bertOutputs[0]
-        return pooler_output
+from transformers import TFAutoModel
 
 class TweetClassifier(tf.keras.Model):
     def __init__(self):
         super(TweetClassifier, self).__init__()
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001)
         self.lossFunc = tf.keras.losses.BinaryCrossentropy()
-        self.preOutPut = tf.keras.layers.Dense(300, activation='relu')
+        self.berttweet = TFAutoModel.from_pretrained("vinai/bertweet-base")
+        # self.preOutPut = tf.keras.layers.Dense(300, activation='relu')
         self.outputLayer = tf.keras.layers.Dense(1)
-        self.batchSize = 50
+        self.batchSize = 1
 
 
-    def call(self, poolerOutput):
-        preOutOutput = self.preOutPut(poolerOutput)
-        finalOutput = self.outputLayer(preOutOutput)
+    def call(self, inputs):
+        poolerOutput = self.berttweet(inputs, return_dict = True)['pooler_output']
+        
+        # preOutOutput = self.preOutPut(poolerOutput)
+        finalOutput = self.outputLayer(poolerOutput)
 
         return finalOutput
 

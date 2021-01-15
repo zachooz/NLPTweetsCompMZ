@@ -1,10 +1,10 @@
 import pandas as pd
 import numpy as np
 import tensorflow as tf
-from transformers import BertTokenizerFast
+from transformers import AutoTokenizer
 
 def preprocess(path, train=True):
-    bertTokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased')
+    bertTokenizer = AutoTokenizer.from_pretrained("vinai/bertweet-base")
 
     df = pd.read_csv(path).replace(np.nan, '', regex=True).to_numpy()
     
