@@ -22,6 +22,7 @@ def preprocess(path, train=True):
     texts = []
     targets = []
     masks = []
+    lengths = []
 
     for row in df:
         tweetid = row[data_dict["id"]]
@@ -36,6 +37,7 @@ def preprocess(path, train=True):
         locations.append(bertTokenizer.convert_tokens_to_ids(location) if location != '' else bertTokenizer.convert_tokens_to_ids('unk'))
         tokenized = bertTokenizer.encode(text)
         texts.append(tokenized)
+        lengths.append(len(tokenized))
         masks.append([1] *  len(tokenized))
 
         if train:
@@ -47,7 +49,7 @@ def preprocess(path, train=True):
     texts = tf.keras.preprocessing.sequence.pad_sequences(texts, padding='post', value=pad_token)
     masks = tf.keras.preprocessing.sequence.pad_sequences(masks, padding='post', value=0)
     if train:
-        dataset = tf.data.Dataset.from_tensor_slices((tweetids, keywords, locations, texts, masks, targets))
+        dataset = tf.data.Dataset.from_tensor_slices((tweetids, keywords, locations, texts, masks, lengths, targets))
         return dataset
 
     dataset = tf.data.Dataset.from_tensor_slices((tweetids, keywords, locations, texts, masks))
@@ -59,8 +61,8 @@ def example_enumerate():
     dataset = dataset.shuffle(1000, reshuffle_each_iteration=True)
     dataset = dataset.batch(2)
 
-    for step, (tweetids, keywords, locations, texts, masks, targets) in enumerate(dataset):
-        print(tweetids, keywords, locations, texts, masks, targets)
+    for step, (tweetids, keywords, locations, texts, masks, lengths, targets) in enumerate(dataset):
+        print(tweetids, keywords, locations, texts, masks, lengths, targets)
         break
 
 if __name__ == "__main__":

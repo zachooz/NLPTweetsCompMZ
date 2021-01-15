@@ -6,16 +6,12 @@ from transformers import BertTokenizer, TFBertForPreTraining
 class TweetClassifier(tf.keras.Model):
     def __init__(self):
         super(TweetClassifier, self).__init__()
-        self.optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001)
+        self.optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
         self.classLossFunc = tf.keras.losses.CategoricalCrossentropy()
         self.nextWordLossFunc = tf.keras.losses.CategoricalCrossentropy()
 
         self.bert = TFBertForPreTraining.from_pretrained('bert-base-uncased')
-
-        self.Dl1 = tf.keras.layers.Dense(300, activation='relu')
-        self.OutputLayer = tf.keras.layers.Dense(1)
-        self.batchSize = 4
-
+        self.batchSize = 1
 
     def call(self, inputs, masks):
         bertOutput = self.bert(inputs, attention_mask=masks, return_dict=True)
