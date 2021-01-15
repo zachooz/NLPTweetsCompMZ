@@ -1,22 +1,28 @@
 import tensorflow as tf
 from transformers import TFAutoModel
 
+class BertModel:
+    def __init__(self):
+        self.berttweet = TFAutoModel.from_pretrained("vinai/bertweet-base")
+    
+    def call(self, inputs):
+        return self.berttweet(inputs, return_dict = True)['pooler_output']
+
 class TweetClassifier(tf.keras.Model):
     def __init__(self):
         super(TweetClassifier, self).__init__()
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=2e-3)
         self.lossFunc = tf.keras.losses.BinaryCrossentropy()
-        self.berttweet = TFAutoModel.from_pretrained("vinai/bertweet-base")
+        
         # self.preOutPut = tf.keras.layers.Dense(300, activation='relu')
         self.outputLayer = tf.keras.layers.Dense(2)
-        self.batchSize = 1
+        self.batchSize = 8
 
 
     def call(self, inputs):
-        poolerOutput = self.berttweet(inputs, return_dict = True)['pooler_output']
-        
+       
         # preOutOutput = self.preOutPut(poolerOutput)
-        finalOutput = self.outputLayer(poolerOutput)
+        finalOutput = self.outputLayer(inputs)
 
         return tf.nn.softmax(finalOutput)
 
